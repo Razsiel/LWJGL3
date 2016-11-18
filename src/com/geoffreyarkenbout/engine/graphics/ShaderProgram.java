@@ -11,7 +11,7 @@ public class ShaderProgram {
     public ShaderProgram() throws Exception {
         programId = glCreateProgram();
         if (programId == 0) {
-            throw new Exception("Could not create shader program");
+            throw new Exception("Could not create Shader");
         }
     }
 
@@ -26,7 +26,7 @@ public class ShaderProgram {
     protected int createShader(String shaderCode, int shaderType) throws Exception {
         int shaderId = glCreateShader(shaderType);
         if (shaderId == 0) {
-            throw new Exception("Error creating shader. Code: " + shaderCode);
+            throw new Exception("Error creating shader. Code: " + shaderId);
         }
 
         glShaderSource(shaderId, shaderCode);

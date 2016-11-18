@@ -39,7 +39,7 @@ public class Renderer {
         };
 
         FloatBuffer verticesBuffer = BufferUtils.createFloatBuffer(vertices.length);
-        verticesBuffer.put(vertices);
+        verticesBuffer.put(vertices).flip();
 
         // Create the VAO
         vaoId = glGenVertexArrays();
@@ -66,7 +66,7 @@ public class Renderer {
     public void render(Window window) {
         clear();
 
-        if (window.isResized()) {
+        if ( window.isResized() ) {
             glViewport(0, 0, window.getWidth(), window.getHeight());
             window.setResized(false);
         }
@@ -77,7 +77,7 @@ public class Renderer {
         glBindVertexArray(vaoId);
         glEnableVertexAttribArray(0);
 
-        // Draw vertices
+        // Draw the vertices
         glDrawArrays(GL_TRIANGLES, 0, 3);
 
         // Restore state
