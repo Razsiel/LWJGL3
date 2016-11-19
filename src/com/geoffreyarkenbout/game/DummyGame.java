@@ -5,6 +5,7 @@ import com.geoffreyarkenbout.engine.IGameLogic;
 import com.geoffreyarkenbout.engine.Window;
 import com.geoffreyarkenbout.engine.graphics.Mesh;
 import com.geoffreyarkenbout.engine.graphics.Texture;
+import com.geoffreyarkenbout.engine.primitives.Plane;
 import org.joml.Vector3f;
 
 import static org.lwjgl.glfw.GLFW.*;
@@ -26,7 +27,7 @@ public class DummyGame implements IGameLogic {
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
-// Create the Mesh
+        // Create the Mesh
         float[] positions = new float[] {
                 // V0
                 -0.5f, 0.5f, 0.5f,
@@ -121,11 +122,19 @@ public class DummyGame implements IGameLogic {
                 16, 18, 19, 17, 16, 19,
                 // Back face
                 4, 6, 7, 5, 4, 7,};
+
         Texture texture = new Texture("/textures/grassblock.png");
+        Texture gridTexture = new Texture("/textures/grid.png");
+
         Mesh mesh = new Mesh(positions, null, texCoords, indices, texture);
+
         GameObject gameObject = new GameObject(mesh);
-        gameObject.setPosition(0, 0, -2);
-        gameObjects = new GameObject[] { gameObject };
+        gameObject.setPosition(0f, 0f, -2f);
+
+        GameObject plane = new Plane(3f, gridTexture);
+        plane.setPosition(0f, -0.5f, -2f);
+
+        gameObjects = new GameObject[] { gameObject, plane };
     }
 
     @Override
@@ -155,28 +164,31 @@ public class DummyGame implements IGameLogic {
 
     @Override
     public void update(float interval) {
-        for (GameObject gameItem : gameObjects) {
+        for (GameObject gameObject : gameObjects) {
             // Update position
-            Vector3f itemPos = gameItem.getPosition();
+            Vector3f itemPos = gameObject.getPosition();
             float posx = itemPos.x + displxInc * 0.01f;
             float posy = itemPos.y + displyInc * 0.01f;
             float posz = itemPos.z + displzInc * 0.01f;
-            gameItem.setPosition(posx, posy, posz);
+            gameObject.setPosition(posx, posy, posz);
 
             // Update scale
-            float scale = gameItem.getScale();
+            float scale = gameObject.getScale();
             scale += scaleInc * 0.05f;
             if ( scale < 0 ) {
                 scale = 0;
             }
-            gameItem.setScale(scale);
+            gameObject.setScale(scale);
 
             // Update rotation angle
-            float rotation = gameItem.getRotation().z + 1.5f;
+            float rotation = gameObject.getRotation().z + 1.5f;
             if ( rotation > 360 ) {
                 rotation = 0;
             }
-            gameItem.setRotation(rotation, rotation, rotation);
+            if (gameObject instanceof Plane) {
+                continue;
+            }
+            gameObject.setRotation(rotation, rotation, rotation);
         }
     }
 
@@ -188,8 +200,10 @@ public class DummyGame implements IGameLogic {
     @Override
     public void cleanup() {
         renderer.cleanup();
-        for (GameObject gameItem : gameObjects) {
-            gameItem.getMesh().cleanup();
+        for (GameObject gameObject : gameObjects) {
+            if (gameObject.getMesh() != null) {
+                gameObject.getMesh().cleanup();
+            }
         }
     }
 }

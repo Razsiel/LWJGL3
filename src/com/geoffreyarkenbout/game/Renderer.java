@@ -57,9 +57,12 @@ public class Renderer {
 
         // Render each gameObject
         for (GameObject gameObject : gameObjects) {
-            Matrix4f worldMatrix = transformation.getWorldMatrix(gameObject.getPosition(), gameObject.getRotation(), gameObject.getScale());
-            shaderProgram.setUniform("worldMatrix", worldMatrix);
-            gameObject.getMesh().render();
+            if (gameObject.getMesh() != null)
+            {
+                Matrix4f worldMatrix = transformation.getWorldMatrix(gameObject.getPosition(), gameObject.getRotation(), gameObject.getScale());
+                shaderProgram.setUniform("worldMatrix", worldMatrix);
+                gameObject.getMesh().render();
+            }
         }
 
         shaderProgram.unbind();

@@ -43,6 +43,15 @@ public class Mesh {
         glBufferData(GL_ARRAY_BUFFER, posBuffer, GL_STATIC_DRAW);
         glVertexAttribPointer(0, 3, GL_FLOAT, false, 0, 0);
 
+        // Texture coordinates VBO
+        vboId = glGenBuffers();
+        vboIds.add(vboId);
+        FloatBuffer texCoordsBuffer = BufferUtils.createFloatBuffer(texCoords.length);
+        texCoordsBuffer.put(texCoords).flip();
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBufferData(GL_ARRAY_BUFFER, texCoordsBuffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
+
         if (colours != null) {
             // Vertex color VBO
             vboId = glGenBuffers();
@@ -53,15 +62,6 @@ public class Mesh {
             glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
             glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
         }
-
-        // Texture coordinates VBO
-        vboId = glGenBuffers();
-        vboIds.add(vboId);
-        FloatBuffer textCoordsBuffer = BufferUtils.createFloatBuffer(texCoords.length);
-        textCoordsBuffer.put(texCoords).flip();
-        glBindBuffer(GL_ARRAY_BUFFER, vboId);
-        glBufferData(GL_ARRAY_BUFFER, textCoordsBuffer, GL_STATIC_DRAW);
-        glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
         // Create the indices VBO and bind to it
         int ind_vboId = glGenBuffers();
@@ -111,6 +111,7 @@ public class Mesh {
         glBindVertexArray(getVaoId());
         glEnableVertexAttribArray(0);
         glEnableVertexAttribArray(1);
+        glEnableVertexAttribArray(2);
 
         // Draw the vertices
         glDrawElements(GL_TRIANGLES, getVertexCount(), GL_UNSIGNED_INT, 0);
