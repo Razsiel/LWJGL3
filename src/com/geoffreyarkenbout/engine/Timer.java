@@ -7,23 +7,18 @@ public class Timer {
         lastLoopTime = getTime();
     }
 
-    public long getTime() {
-        return System.currentTimeMillis();
+    public double getTime() {
+        return System.nanoTime() / 1000_000_000.0;
     }
 
-    public float getElapsedTime(){
-        double current = System.currentTimeMillis();
-        float elapsed = (float)(current - lastLoopTime);
-        lastLoopTime = current;
-        return elapsed;
-
+    public float getElapsedTime() {
+        double time = getTime();
+        float elapsedTime = (float) (time - lastLoopTime);
+        lastLoopTime = time;
+        return elapsedTime;
     }
 
-    public void reset(){
-        lastLoopTime = System.currentTimeMillis();
-    }
-
-    public double getLastLoopTime(){
+    public double getLastLoopTime() {
         return lastLoopTime;
     }
 }

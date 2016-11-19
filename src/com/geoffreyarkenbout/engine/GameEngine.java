@@ -46,7 +46,7 @@ public class GameEngine implements Runnable {
 
     protected void gameLoop() {
         float elapsedTime;
-        float accumulator = 0;
+        float accumulator = 0f;
         float interval = 1f / TARGET_UPS;
 
         boolean running = true;
@@ -63,10 +63,14 @@ public class GameEngine implements Runnable {
 
             render();
 
-            if (!window.isvSync()){
+            if (!window.isvSync()) {
                 sync();
             }
         }
+    }
+
+    protected void cleanup(){
+        gameLogic.cleanup();
     }
 
     private void sync() {
@@ -88,9 +92,6 @@ public class GameEngine implements Runnable {
         gameLogic.update(interval);
     }
 
-    protected void cleanup(){
-        gameLogic.cleanup();
-    }
 
     protected void render(){
         gameLogic.render(window);
