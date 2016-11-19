@@ -3,6 +3,7 @@ package com.geoffreyarkenbout.game;
 import com.geoffreyarkenbout.engine.GameObject;
 import com.geoffreyarkenbout.engine.Utils;
 import com.geoffreyarkenbout.engine.Window;
+import com.geoffreyarkenbout.engine.graphics.Camera;
 import com.geoffreyarkenbout.engine.graphics.Mesh;
 import com.geoffreyarkenbout.engine.graphics.ShaderProgram;
 import com.geoffreyarkenbout.engine.graphics.Transformation;
@@ -30,17 +31,17 @@ public class Renderer {
         shaderProgram.link();
 
         shaderProgram.createUniform("projectionMatrix");
-        shaderProgram.createUniform("worldMatrix");
+        shaderProgram.createUniform("modelViewMatrix");
         shaderProgram.createUniform("texture_sampler");
 
-        window.setClearColor(0.0f, 0.0f, 0.0f, 0.0f);
+        window.setClearColor(0.0f, 0.6f, 1.0f, 0.0f);
     }
 
     public void clear(){
         glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
     }
 
-    public void render(Window window, GameObject[] gameObjects) {
+    public void render(Window window, Camera camera, GameObject[] gameObjects) {
         clear();
 
         if ( window.isResized() ) {
@@ -53,14 +54,16 @@ public class Renderer {
         Matrix4f projectionMatrix = transformation.getProjectionMatrix(FOV, window.getWidth(), window.getHeight(), Z_NEAR, Z_FAR);
         shaderProgram.setUniform("projectionMatrix", projectionMatrix);
 
+        Matrix4f viewMatrix = transformation.getViewMatrix(camera);
+
         shaderProgram.setUniform("texture_sampler", 0);
 
         // Render each gameObject
         for (GameObject gameObject : gameObjects) {
             if (gameObject.getMesh() != null)
             {
-                Matrix4f worldMatrix = transformation.getWorldMatrix(gameObject.getPosition(), gameObject.getRotation(), gameObject.getScale());
-                shaderProgram.setUniform("worldMatrix", worldMatrix);
+                Matrix4f modelViewMatrix  = transformation.getModelViewMatrix(gameObject, viewMatrix);
+                shaderProgram.setUniform("modelViewMatrix", modelViewMatrix);
                 gameObject.getMesh().render();
             }
         }

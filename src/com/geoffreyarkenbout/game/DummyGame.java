@@ -3,6 +3,7 @@ package com.geoffreyarkenbout.game;
 import com.geoffreyarkenbout.engine.GameObject;
 import com.geoffreyarkenbout.engine.IGameLogic;
 import com.geoffreyarkenbout.engine.Window;
+import com.geoffreyarkenbout.engine.graphics.Camera;
 import com.geoffreyarkenbout.engine.graphics.Mesh;
 import com.geoffreyarkenbout.engine.graphics.Texture;
 import com.geoffreyarkenbout.engine.primitives.Plane;
@@ -13,15 +14,12 @@ import static org.lwjgl.glfw.GLFW.*;
 public class DummyGame implements IGameLogic {
 
     private final Renderer renderer;
+    private final Camera camera;
     private GameObject[] gameObjects;
-
-    private int displxInc = 0;
-    private int displyInc = 0;
-    private int displzInc = 0;
-    private int scaleInc = 0;
 
     public DummyGame() {
         renderer = new Renderer();
+        camera = new Camera();
     }
 
     @Override
@@ -128,73 +126,41 @@ public class DummyGame implements IGameLogic {
 
         Mesh mesh = new Mesh(positions, null, texCoords, indices, texture);
 
-        GameObject gameObject = new GameObject(mesh);
-        gameObject.setPosition(0f, 0f, -2f);
+        GameObject gameItem1 = new GameObject(mesh);
+        gameItem1.setScale(0.5f);
+        gameItem1.setPosition(0, 0, -2);
+
+        GameObject gameItem2 = new GameObject(mesh);
+        gameItem2.setScale(0.5f);
+        gameItem2.setPosition(0.5f, 0.5f, -2);
+
+        GameObject gameItem3 = new GameObject(mesh);
+        gameItem3.setScale(0.5f);
+        gameItem3.setPosition(0, 0, -2.5f);
+
+        GameObject gameItem4 = new GameObject(mesh);
+        gameItem4.setScale(0.5f);
+        gameItem4.setPosition(0.5f, 0, -2.5f);
 
         GameObject plane = new Plane(3f, gridTexture);
         plane.setPosition(0f, -0.5f, -2f);
 
-        gameObjects = new GameObject[] { gameObject, plane };
+        gameObjects = new GameObject[]{gameItem1, gameItem2, gameItem3, gameItem4, plane};
     }
 
     @Override
     public void input(Window window) {
-        displyInc = 0;
-        displxInc = 0;
-        displzInc = 0;
-        scaleInc = 0;
-        if (window.isKeyPressed(GLFW_KEY_UP)) {
-            displyInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_DOWN)) {
-            displyInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_LEFT)) {
-            displxInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_RIGHT)) {
-            displxInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_A)) {
-            displzInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_Q)) {
-            displzInc = 1;
-        } else if (window.isKeyPressed(GLFW_KEY_Z)) {
-            scaleInc = -1;
-        } else if (window.isKeyPressed(GLFW_KEY_X)) {
-            scaleInc = 1;
-        }
+
     }
 
     @Override
     public void update(float interval) {
-        for (GameObject gameObject : gameObjects) {
-            // Update position
-            Vector3f itemPos = gameObject.getPosition();
-            float posx = itemPos.x + displxInc * 0.01f;
-            float posy = itemPos.y + displyInc * 0.01f;
-            float posz = itemPos.z + displzInc * 0.01f;
-            gameObject.setPosition(posx, posy, posz);
 
-            // Update scale
-            float scale = gameObject.getScale();
-            scale += scaleInc * 0.05f;
-            if ( scale < 0 ) {
-                scale = 0;
-            }
-            gameObject.setScale(scale);
-
-            // Update rotation angle
-            float rotation = gameObject.getRotation().z + 1.5f;
-            if ( rotation > 360 ) {
-                rotation = 0;
-            }
-            if (gameObject instanceof Plane) {
-                continue;
-            }
-            gameObject.setRotation(rotation, rotation, rotation);
-        }
     }
 
     @Override
     public void render(Window window) {
-        renderer.render(window, gameObjects);
+        renderer.render(window, camera, gameObjects);
     }
 
     @Override
