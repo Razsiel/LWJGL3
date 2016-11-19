@@ -1,0 +1,21 @@
+<component name="libraryTable">
+  <library name="com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.4" type="repository">
+    <properties maven-id="com.badlogicgames.gdx:gdx-backend-lwjgl3:1.9.4" />
+    <CLASSES>
+      <root url="jar://$PROJECT_DIR$/lib/gdx-backend-lwjgl3-1.9.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/gdx-1.9.4.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lwjgl-3.0.0.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lwjgl-platform-3.0.0-natives-windows.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lwjgl-platform-3.0.0-natives-linux.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/lwjgl-platform-3.0.0-natives-osx.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jlayer-1.0.1-gdx.jar!/" />
+      <root url="jar://$PROJECT_DIR$/lib/jorbis-0.0.17.jar!/" />
+    </CLASSES>
+    <JAVADOC>
+      <root url="jar://$PROJECT_DIR$/lib/gdx-backend-lwjgl3-1.9.4-javadoc.jar!/" />
+    </JAVADOC>
+    <SOURCES>
+      <root url="jar://$PROJECT_DIR$/lib/gdx-backend-lwjgl3-1.9.4-sources.jar!/" />
+    </SOURCES>
+  </library>
+</component>

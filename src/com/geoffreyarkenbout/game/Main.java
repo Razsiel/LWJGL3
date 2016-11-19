@@ -1,4 +1,4 @@
-package com.geoffreyarkenbout;
+package com.geoffreyarkenbout.game;
 
 import com.geoffreyarkenbout.engine.GameEngine;
 import com.geoffreyarkenbout.engine.IGameLogic;
@@ -12,7 +12,7 @@ public class Main {
 
     public static void main(String[] args){
         try{
-            IGameLogic logic = new Game();
+            IGameLogic logic = new DummyGame();
             GameEngine engine = new GameEngine(title, width, height, vSync, logic);
             engine.start();
         } catch (Exception e) {

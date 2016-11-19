@@ -2,7 +2,7 @@ package com.geoffreyarkenbout.engine;
 
 public interface IGameLogic {
 
-    void init() throws Exception;
+    void init(Window window) throws Exception;
     void input(Window window);
     void update(float interval);
     void render(Window window);

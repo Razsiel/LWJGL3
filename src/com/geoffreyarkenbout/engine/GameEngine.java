@@ -33,13 +33,15 @@ public class GameEngine implements Runnable {
             gameLoop();
         } catch (Exception ex) {
             ex.printStackTrace();
+        } finally {
+            cleanup();
         }
     }
 
     protected void init() throws Exception {
         window.init();
         timer.init();
-        gameLogic.init();
+        gameLogic.init(window);
     }
 
     protected void gameLoop() {
@@ -84,6 +86,10 @@ public class GameEngine implements Runnable {
 
     protected void update(float interval) {
         gameLogic.update(interval);
+    }
+
+    protected void cleanup(){
+        gameLogic.cleanup();
     }
 
     protected void render(){

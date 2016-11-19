@@ -1,5 +1,12 @@
 package com.geoffreyarkenbout.engine.graphics;
 
+import org.joml.Matrix4f;
+import org.lwjgl.BufferUtils;
+
+import java.nio.FloatBuffer;
+import java.util.HashMap;
+import java.util.Map;
+
 import static org.lwjgl.opengl.GL20.*;
 
 public class ShaderProgram {
@@ -8,11 +15,14 @@ public class ShaderProgram {
     private int vertexShaderId;
     private int fragmentShaderId;
 
+    private final Map<String, Integer> uniforms;
+
     public ShaderProgram() throws Exception {
         programId = glCreateProgram();
         if (programId == 0) {
             throw new Exception("Could not create Shader");
         }
+        uniforms = new HashMap<>();
     }
 
     public void createVertexShader(String shaderCode) throws Exception {
@@ -21,6 +31,14 @@ public class ShaderProgram {
 
     public void createFragmentShader(String shaderCode) throws Exception {
         fragmentShaderId = createShader(shaderCode, GL_FRAGMENT_SHADER);
+    }
+
+    public void createUniform(String uniformName) throws Exception {
+        int uniformLocation = glGetUniformLocation(programId, uniformName);
+        if (uniformLocation < 0) {
+            throw new Exception("Could not find uniform: " + uniformName);
+        }
+        uniforms.put(uniformName, uniformLocation);
     }
 
     protected int createShader(String shaderCode, int shaderType) throws Exception {
@@ -39,6 +57,12 @@ public class ShaderProgram {
         glAttachShader(programId, shaderId);
 
         return shaderId;
+    }
+
+    public void setUniform(String uniformName, Matrix4f value) {
+        FloatBuffer fb = BufferUtils.createFloatBuffer(4*4);
+        value.get(fb);
+        glUniformMatrix4fv(uniforms.get(uniformName), false, fb);
     }
 
     public void link() throws Exception {
