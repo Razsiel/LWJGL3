@@ -1,5 +1,6 @@
 package com.geoffreyarkenbout.engine.graphics;
 
+import org.joml.Vector3f;
 import org.lwjgl.BufferUtils;
 
 import java.nio.FloatBuffer;
@@ -14,14 +15,19 @@ import static org.lwjgl.opengl.GL20.*;
 import static org.lwjgl.opengl.GL30.*;
 
 public class Mesh {
-    private final int vaoId;
-    private final Texture texture;
-    private List<Integer> vboIds;
-    private final int vertexCount;
 
-    public Mesh(float[] positions, float[] colours, float[] texCoords, int[] indices, Texture texture) {
+    private static final Vector3f DEFAULT_COLOUR = new Vector3f(1.0f, 1.0f, 1.0f);
+
+    private final int vaoId;
+    private final int vertexCount;
+    private List<Integer> vboIds;
+
+    private Texture texture;
+    private Vector3f colour;
+
+    public Mesh(float[] positions, float[] texCoords, float[] normals, int[] indices) {
+        colour = DEFAULT_COLOUR;
         vertexCount = indices.length;
-        this.texture = texture;
         vboIds = new ArrayList<>();
 
         // Create the VAO
@@ -46,18 +52,16 @@ public class Mesh {
         glBufferData(GL_ARRAY_BUFFER, texCoordsBuffer, GL_STATIC_DRAW);
         glVertexAttribPointer(1, 2, GL_FLOAT, false, 0, 0);
 
-        if (colours != null) {
-            // Vertex color VBO
-            vboId = glGenBuffers();
-            vboIds.add(vboId);
-            FloatBuffer colourBuffer = BufferUtils.createFloatBuffer(colours.length);
-            colourBuffer.put(colours).flip();
-            glBindBuffer(GL_ARRAY_BUFFER, vboId);
-            glBufferData(GL_ARRAY_BUFFER, colourBuffer, GL_STATIC_DRAW);
-            glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
-        }
+        // Normals VBO
+        vboId = glGenBuffers();
+        vboIds.add(vboId);
+        FloatBuffer normalsBuffer = BufferUtils.createFloatBuffer(normals.length);
+        normalsBuffer.put(normals).flip();
+        glBindBuffer(GL_ARRAY_BUFFER, vboId);
+        glBufferData(GL_ARRAY_BUFFER, normalsBuffer, GL_STATIC_DRAW);
+        glVertexAttribPointer(2, 3, GL_FLOAT, false, 0, 0);
 
-        // Create the indices VBO and bind to it
+        // Indices VBO
         int ind_vboId = glGenBuffers();
         vboIds.add(ind_vboId);
         IntBuffer indicesBuffer = BufferUtils.createIntBuffer(indices.length);
@@ -72,6 +76,26 @@ public class Mesh {
         glBindVertexArray(0);
     }
 
+    public boolean isTextured(){
+        return texture != null;
+    }
+
+    public Texture getTexture() {
+        return texture;
+    }
+
+    public void setTexture(Texture texture) {
+        this.texture = texture;
+    }
+
+    public Vector3f getColour() {
+        return colour;
+    }
+
+    public void setColour(Vector3f colour) {
+        this.colour = colour;
+    }
+
     public int getVaoId() {
         return vaoId;
     }
@@ -80,26 +104,11 @@ public class Mesh {
         return vertexCount;
     }
 
-    public void cleanup(){
-        glDisableVertexAttribArray(0);
-
-        // Delete the VBO
-        glBindBuffer(GL_ARRAY_BUFFER, 0);
-        for (int vboId : vboIds) {
-            glDeleteBuffers(vboId);
-        }
-
-        // Delete the texture
-        texture.cleanup();
-
-        // Delete the VAO
-        glBindVertexArray(0);
-        glDeleteVertexArrays(vaoId);
-    }
-
     public void render() {
-        glActiveTexture(GL_TEXTURE0);
-        texture.bind();
+        if (texture != null) {
+            glActiveTexture(GL_TEXTURE0);
+            glBindTexture(GL_TEXTURE_2D, texture.getId());
+        }
 
         // Bind to the VAO
         glBindVertexArray(getVaoId());
@@ -112,6 +121,28 @@ public class Mesh {
 
         // Restore state
         glDisableVertexAttribArray(0);
+        glDisableVertexAttribArray(1);
+        glDisableVertexAttribArray(2);
         glBindVertexArray(0);
+        glBindTexture(GL_TEXTURE_2D, 0);
+    }
+
+    public void cleanup(){
+        glDisableVertexAttribArray(0);
+
+        // Delete the VBO
+        glBindBuffer(GL_ARRAY_BUFFER, 0);
+        for (int vboId : vboIds) {
+            glDeleteBuffers(vboId);
+        }
+
+        if (texture != null) {
+            // Delete the texture
+            texture.cleanup();
+        }
+
+        // Delete the VAO
+        glBindVertexArray(0);
+        glDeleteVertexArrays(vaoId);
     }
 }

@@ -6,6 +6,7 @@ import com.geoffreyarkenbout.engine.MouseInput;
 import com.geoffreyarkenbout.engine.Window;
 import com.geoffreyarkenbout.engine.graphics.Camera;
 import com.geoffreyarkenbout.engine.graphics.Mesh;
+import com.geoffreyarkenbout.engine.graphics.OBJLoader;
 import com.geoffreyarkenbout.engine.graphics.Texture;
 import com.geoffreyarkenbout.engine.primitives.Plane;
 import org.joml.Vector2f;
@@ -32,127 +33,17 @@ public class DummyGame implements IGameLogic {
     @Override
     public void init(Window window) throws Exception {
         renderer.init(window);
-        // Create the Mesh
-        float[] positions = new float[] {
-                // V0
-                -0.5f, 0.5f, 0.5f,
-                // V1
-                -0.5f, -0.5f, 0.5f,
-                // V2
-                0.5f, -0.5f, 0.5f,
-                // V3
-                0.5f, 0.5f, 0.5f,
-                // V4
-                -0.5f, 0.5f, -0.5f,
-                // V5
-                0.5f, 0.5f, -0.5f,
-                // V6
-                -0.5f, -0.5f, -0.5f,
-                // V7
-                0.5f, -0.5f, -0.5f,
-
-                // For text coords in top face
-                // V8: V4 repeated
-                -0.5f, 0.5f, -0.5f,
-                // V9: V5 repeated
-                0.5f, 0.5f, -0.5f,
-                // V10: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V11: V3 repeated
-                0.5f, 0.5f, 0.5f,
-
-                // For text coords in right face
-                // V12: V3 repeated
-                0.5f, 0.5f, 0.5f,
-                // V13: V2 repeated
-                0.5f, -0.5f, 0.5f,
-
-                // For text coords in left face
-                // V14: V0 repeated
-                -0.5f, 0.5f, 0.5f,
-                // V15: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-
-                // For text coords in bottom face
-                // V16: V6 repeated
-                -0.5f, -0.5f, -0.5f,
-                // V17: V7 repeated
-                0.5f, -0.5f, -0.5f,
-                // V18: V1 repeated
-                -0.5f, -0.5f, 0.5f,
-                // V19: V2 repeated
-                0.5f, -0.5f, 0.5f,
-        };
-        float[] texCoords = new float[]{
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.5f, 0.0f,
-
-                0.0f, 0.0f,
-                0.5f, 0.0f,
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-
-                // For text coords in top face
-                0.0f, 0.5f,
-                0.5f, 0.5f,
-                0.0f, 1.0f,
-                0.5f, 1.0f,
-
-                // For text coords in right face
-                0.0f, 0.0f,
-                0.0f, 0.5f,
-
-                // For text coords in left face
-                0.5f, 0.0f,
-                0.5f, 0.5f,
-
-                // For text coords in bottom face
-                0.5f, 0.0f,
-                1.0f, 0.0f,
-                0.5f, 0.5f,
-                1.0f, 0.5f,
-        };
-        int[] indices = new int[]{
-                // Front face
-                0, 1, 3, 3, 1, 2,
-                // Top Face
-                8, 10, 11, 9, 8, 11,
-                // Right face
-                12, 13, 7, 5, 12, 7,
-                // Left face
-                14, 15, 6, 4, 14, 6,
-                // Bottom face
-                16, 18, 19, 17, 16, 19,
-                // Back face
-                4, 6, 7, 5, 4, 7,};
 
         Texture texture = new Texture("/textures/grassblock.png");
-        Texture gridTexture = new Texture("/textures/grid.png");
 
-        Mesh mesh = new Mesh(positions, null, texCoords, indices, texture);
+        Mesh mesh = OBJLoader.loadMesh("/models/bunny.obj");
+        //mesh.setTexture(texture);
 
-        GameObject gameItem1 = new GameObject(mesh);
-        gameItem1.setScale(0.5f);
-        gameItem1.setPosition(0, 0, -2);
+        GameObject gameObject = new GameObject(mesh);
+        gameObject.setScale(0.25f);
+        gameObject.setPosition(0, 0, -2);
 
-        GameObject gameItem2 = new GameObject(mesh);
-        gameItem2.setScale(0.5f);
-        gameItem2.setPosition(0.5f, 0.5f, -2);
-
-        GameObject gameItem3 = new GameObject(mesh);
-        gameItem3.setScale(0.5f);
-        gameItem3.setPosition(0, 0, -2.5f);
-
-        GameObject gameItem4 = new GameObject(mesh);
-        gameItem4.setScale(0.5f);
-        gameItem4.setPosition(0.5f, 0, -2.5f);
-
-        GameObject plane = new Plane(3f, gridTexture);
-        plane.setPosition(0f, -0.5f, -2f);
-
-        gameObjects = new GameObject[]{gameItem1, gameItem2, gameItem3, gameItem4, plane};
+        gameObjects = new GameObject[]{ gameObject };
     }
 
     @Override
@@ -183,10 +74,10 @@ public class DummyGame implements IGameLogic {
                 cameraInc.z * CAMERA_POS_STEP);
 
         // Update camera based on mouse
-        //if (mouseInput.isRightButtonPressed()) {
+        if (mouseInput.isRightButtonPressed()) {
             Vector2f rotVec = mouseInput.getDisplVec();
             camera.rotate(rotVec.x * MOUSE_SENSITIVITY, rotVec.y * MOUSE_SENSITIVITY, 0);
-        //}
+        }
     }
 
     @Override

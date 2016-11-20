@@ -30,7 +30,7 @@ public class Plane extends GameObject {
                 0, 1, 3,
                 3, 1, 2
         };
-        Mesh mesh = new Mesh(positions, null, texCoords, indices, texture);
+        Mesh mesh = new Mesh(positions, texCoords, null, indices);
         setMesh(mesh);
     }
 }
